@@ -12,20 +12,20 @@ def createDataSet():
 
 
 def classify0(inX, dataSet, labels, k):
-    dataSetSize = dataSet.shape[0]  # 行数
+    dataSetSize = dataSet.shape[0]
     # 距离计算
-    diffMat = tile(inX, (dataSetSize,1))-dataSet    # 输入向量与训练集中各实例的差        
-    sqDiffMat = diffMat**2  # diffMat各个元素的平方
-    sqDistances = sqDiffMat.sum(axis=1) # 默认的axis=0是普通的相加，axis=1是将一个矩阵的每一行向量相加
-    distances = sqDistances**0.5    # 欧氏距离
-    sortedDistIndicies = distances.argsort()    # argsort函数返回的是数组值从小到大的索引值
+    diffMat = tile(inX, (dataSetSize,1))-dataSet     
+    sqDiffMat = diffMat**2
+    sqDistances = sqDiffMat.sum(axis=1)
+    distances = sqDistances**0.5
+    sortedDistIndicies = distances.argsort()
     classCount = {}
     # 选择距离最小的k个点
     for i in range(k):
         voteIlabel = labels[sortedDistIndicies[i]]
         classCount[voteIlabel] = classCount.get(voteIlabel,0) + 1
     # 排序
-    sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True) # classCount.iteritems()元组形式，itemgetter(1)表示按每个元组的第二个元素排序，返回结果类似[('c', 3), ('b', 2), ('a', 1)]
+    sortedClassCount = sorted(classCount.items(), key=operator.itemgetter(1), reverse=True)
     return sortedClassCount[0][0]
 
 
@@ -69,22 +69,22 @@ def datingClassTest():
     errorCount = 0.0
     for i in range(numTestVecs):
         classifierResult = classify0(normMat[i,:], normMat[numTestVecs:m,:], datingLabels[numTestVecs:m], 3)
-        print "the classifier came back with: %d, the real answer is: %d" % (classifierResult, datingLabels[i])
+        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, datingLabels[i]))
         if(classifierResult != datingLabels[i]): errorCount += 1.0
-    print "the total error rate is: %f" % (errorCount/float(numTestVecs))
-    print errorCount
+    print("the total error rate is: %f" % (errorCount/float(numTestVecs)))
+    print(errorCount)
 
 
 def classifyPerson():
     resultList = ['not at all','in small doses', 'in large doses']
-    percentTats = float(raw_input("percentage of time spent playing video games?"))
-    ffMiles = float(raw_input("frequent flier miles earned per year?"))
-    iceCream = float(raw_input("liters of ice cream consumed per year?"))
+    percentTats = float(input("percentage of time spent playing video games?"))
+    ffMiles = float(input("frequent flier miles earned per year?"))
+    iceCream = float(input("liters of ice cream consumed per year?"))
     datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
     normMat, ranges, minVals = autoNorm(datingDataMat)
     inArr = array([ffMiles, percentTats, iceCream])
     classifierResult = classify0((inArr-minVals)/ranges,normMat,datingLabels,3)
-    print "You will probably like this person: ", resultList[classifierResult - 1]
+    print("You will probably like this person: ", resultList[classifierResult - 1])
 
 
 def img2vector(filename):
@@ -99,27 +99,36 @@ def img2vector(filename):
 
 def handwritingClassTest():
     hwLabels = []
-    # 获取目录内容（即目录里的文件名），返回结果类似['9_97.txt', '9_98.txt', '9_99.txt']
+    # 获取目录内容
     trainingFileList = listdir('trainingDigits')
     m = len(trainingFileList)   # 目录里的文件数
     trainingMat = zeros((m,1024))
     # 从文件名解析分类数字
     for i in range(m):
-        fileNameStr = trainingFileList[i]   # 9_97.txt
-        fileStr = fileNameStr.split('.')[0]     #take off .txt,返回结果类似9_97
-        classNumStr = int(fileStr.split('_')[0])    # 9
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
         hwLabels.append(classNumStr)
         trainingMat[i,:] = img2vector('trainingDigits/%s' % fileNameStr)
-    testFileList = listdir('testDigits')        #iterate through the test set
+    testFileList = listdir('testDigits')
     errorCount = 0.0
     mTest = len(testFileList)
     for i in range(mTest):
         fileNameStr = testFileList[i]
-        fileStr = fileNameStr.split('.')[0]     #take off .txt
+        fileStr = fileNameStr.split('.')[0]
         classNumStr = int(fileStr.split('_')[0])
         vectorUnderTest = img2vector('testDigits/%s' % fileNameStr)
         classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
-        print "the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr)
+        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr))
         if (classifierResult != classNumStr): errorCount += 1.0
-    print "\nthe total number of errors is: %d" % errorCount
-    print "\nthe total error rate is: %f" % (errorCount/float(mTest))
+    print("\nthe total number of errors is: %d" % errorCount)
+    print("\nthe total error rate is: %f" % (errorCount/float(mTest)))
+
+
+def main():
+	# datingClassTest()
+	classifyPerson()
+	# handwritingClassTest()
+
+
+main()
