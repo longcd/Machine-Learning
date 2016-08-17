@@ -21,6 +21,7 @@
 ‘À––£∫
 ```import bayes
 bayes.testingNB()
+```
 
 ---
 
