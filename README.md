@@ -2,3 +2,4 @@
 
 kNN
 decision-tree
+bayes
