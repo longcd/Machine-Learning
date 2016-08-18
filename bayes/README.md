@@ -1,5 +1,12 @@
 # 朴素贝叶斯
 
+文件：
+```email```邮件数据集
+```bayes.py```使用Python进行文本分类
+```Naive_Bayes_spam_filtering.py```使用朴素贝叶斯过滤垃圾邮件
+
+---
+
 ```bayes.py``` 使用Python进行文本分类
 
 环境：```python3```
