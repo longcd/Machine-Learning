@@ -7,3 +7,5 @@ decision-tree
 bayes
 
 Logistic
+
+kMeans
